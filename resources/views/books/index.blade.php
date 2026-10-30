@@ -9,6 +9,14 @@
     <main>
         <h1>My Reading List</h1>
 
+        <p>
+            <a href="{{ route('books.create') }}">Add book</a>
+        </p>
+
+        @if (session('success'))
+            <p>{{ session('success') }}</p>
+        @endif
+
         @forelse ($books as $book)
             <article>
                 <h2>{{ $book->title }}</h2>
