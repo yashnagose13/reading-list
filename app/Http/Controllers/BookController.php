@@ -10,16 +10,26 @@ use Illuminate\View\View;
 class BookController extends Controller
 {
     /**
-     * Display a listing of the books.
-     */
-    public function index(): View
-    {
-        $books = Book::latest()->get();
+ * Display a listing of the books.
+ */
+public function index(Request $request): View
+{
+    $status = $request->query('status');
+    $allowedStatuses = ['to-read', 'reading', 'finished'];
 
-        return view('books.index', [
-            'books' => $books,
-        ]);
-    }
+    $books = Book::query()
+        ->when(
+            in_array($status, $allowedStatuses, true),
+            fn ($query) => $query->where('status', $status)
+        )
+        ->latest()
+        ->get();
+
+    return view('books.index', [
+        'books' => $books,
+        'status' => $status,
+    ]);
+}
 
     /**
      * Show the form for creating a new book.
