@@ -1,56 +1,90 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reading List</title>
-</head>
-<body>
-    <main>
-        <h1>My Reading List</h1>
+<x-layouts.app title="My Reading List">
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">Personal library</p>
+            <h1>My Reading List</h1>
+            <p class="intro">A calm place to organise the books waiting on your shelf.</p>
+        </div>
+    </section>
 
-        <p>
-            <a href="{{ route('books.create') }}">Add book</a>
-        </p>
+    <nav class="filters" aria-label="Filter books by status">
+        <a
+            class="filter-link {{ $status === null ? 'is-active' : '' }}"
+            href="{{ route('books.index') }}"
+        >
+            All
+        </a>
+        <a
+            class="filter-link {{ $status === 'to-read' ? 'is-active' : '' }}"
+            href="{{ route('books.index', ['status' => 'to-read']) }}"
+        >
+            To read
+        </a>
+        <a
+            class="filter-link {{ $status === 'reading' ? 'is-active' : '' }}"
+            href="{{ route('books.index', ['status' => 'reading']) }}"
+        >
+            Reading
+        </a>
+        <a
+            class="filter-link {{ $status === 'finished' ? 'is-active' : '' }}"
+            href="{{ route('books.index', ['status' => 'finished']) }}"
+        >
+            Finished
+        </a>
+    </nav>
 
-        <nav aria-label="Filter books by status">
-            <a href="{{ route('books.index') }}">All</a>
-            ·
-            <a href="{{ route('books.index', ['status' => 'to-read']) }}">To read</a>
-            ·
-            <a href="{{ route('books.index', ['status' => 'reading']) }}">Reading</a>
-            ·
-            <a href="{{ route('books.index', ['status' => 'finished']) }}">Finished</a>
-        </nav>
+    @if ($books->isNotEmpty())
+        <section class="book-grid">
+            @foreach ($books as $book)
+                <article class="book-card">
+                    <div class="book-card-top">
+                        <div>
+                            <h2>{{ $book->title }}</h2>
+                            <p class="book-author">by {{ $book->author }}</p>
+                        </div>
 
-        @if (session('success'))
-            <p>{{ session('success') }}</p>
-        @endif
+                        <span class="status-pill status-{{ $book->status }}">
+                            {{ ucfirst(str_replace('-', ' ', $book->status)) }}
+                        </span>
+                    </div>
 
-        @forelse ($books as $book)
-            <article>
-                <h2>{{ $book->title }}</h2>
-                <p>By {{ $book->author }}</p>
-                <p>Status: {{ $book->status }}</p>
+                    <div class="book-actions">
+                        <a class="button button-secondary" href="{{ route('books.edit', $book) }}">
+                            Edit
+                        </a>
 
-                <p>
-                    <a href="{{ route('books.edit', $book) }}">Edit</a>
-                </p>
+                        <form
+                            class="inline-form"
+                            action="{{ route('books.destroy', $book) }}"
+                            method="POST"
+                            onsubmit="return confirm('Are you sure?');"
+                        >
+                            @csrf
+                            @method('DELETE')
 
-                <form
-                    action="{{ route('books.destroy', $book) }}"
-                    method="POST"
-                    onsubmit="return confirm('Are you sure?');"
-                >
-                    @csrf
-                    @method('DELETE')
+                            <button class="button button-danger" type="submit">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                </article>
+            @endforeach
+        </section>
+    @else
+        <section class="empty-state">
+            <div class="empty-icon">+</div>
+            <h2>No books yet</h2>
 
-                    <button type="submit">Delete</button>
-                </form>
-            </article>
-        @empty
-            <p>No books yet.</p>
-        @endforelse
-    </main>
-</body>
-</html>
+            @if ($status)
+                <p class="muted">There are no books with the {{ str_replace('-', ' ', $status) }} status.</p>
+            @else
+                <p class="muted">Your shelves are waiting for their first book.</p>
+            @endif
+
+            <a class="button button-primary" href="{{ route('books.create') }}">
+                Add your first book
+            </a>
+        </section>
+    @endif
+</x-layouts.app>

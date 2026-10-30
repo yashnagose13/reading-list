@@ -1,87 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add a Book</title>
-</head>
-<body>
-    <main>
-        <h1>Add a Book</h1>
+<x-layouts.app title="Add a Book">
+    <section class="form-wrap">
+        <a class="back-link" href="{{ route('books.index') }}">
+            ← Back to reading list
+        </a>
 
-        <p>
-            <a href="{{ route('books.index') }}">Back to reading list</a>
-        </p>
+        <div class="form-card">
+            <p class="eyebrow">New entry</p>
+            <h1>Add a Book</h1>
+            <p class="intro">Add a title now, then keep its reading progress up to date.</p>
 
-        @if ($errors->any())
-            <div>
-                <p>Please fix the following errors:</p>
+            @if ($errors->any())
+                <div class="alert alert-error">
+                    <strong>Please fix the following errors:</strong>
 
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-        <form action="{{ route('books.store') }}" method="POST">
-            @csrf
+            <form action="{{ route('books.store') }}" method="POST">
+                @csrf
 
-            <p>
-                <label for="title">Title</label><br>
-                <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    value="{{ old('title') }}"
-                    maxlength="255"
-                >
+                <div class="field">
+                    <label for="title">Title</label>
+                    <input
+                        class="input @error('title') input-error @enderror"
+                        type="text"
+                        id="title"
+                        name="title"
+                        value="{{ old('title') }}"
+                        maxlength="255"
+                    >
 
-                @error('title')
-                    <br>
-                    <span>{{ $message }}</span>
-                @enderror
-            </p>
+                    @error('title')
+                        <span class="field-error">{{ $message }}</span>
+                    @enderror
+                </div>
 
-            <p>
-                <label for="author">Author</label><br>
-                <input
-                    type="text"
-                    id="author"
-                    name="author"
-                    value="{{ old('author') }}"
-                    maxlength="255"
-                >
+                <div class="field">
+                    <label for="author">Author</label>
+                    <input
+                        class="input @error('author') input-error @enderror"
+                        type="text"
+                        id="author"
+                        name="author"
+                        value="{{ old('author') }}"
+                        maxlength="255"
+                    >
 
-                @error('author')
-                    <br>
-                    <span>{{ $message }}</span>
-                @enderror
-            </p>
+                    @error('author')
+                        <span class="field-error">{{ $message }}</span>
+                    @enderror
+                </div>
 
-            <p>
-                <label for="status">Status</label><br>
-                <select id="status" name="status">
-                    <option value="to-read" @selected(old('status', 'to-read') === 'to-read')>
-                        To read
-                    </option>
-                    <option value="reading" @selected(old('status') === 'reading')>
-                        Reading
-                    </option>
-                    <option value="finished" @selected(old('status') === 'finished')>
-                        Finished
-                    </option>
-                </select>
+                <div class="field">
+                    <label for="status">Status</label>
+                    <select class="input" id="status" name="status">
+                        <option value="to-read" @selected(old('status', 'to-read') === 'to-read')>
+                            To read
+                        </option>
+                        <option value="reading" @selected(old('status') === 'reading')>
+                            Reading
+                        </option>
+                        <option value="finished" @selected(old('status') === 'finished')>
+                            Finished
+                        </option>
+                    </select>
 
-                @error('status')
-                    <br>
-                    <span>{{ $message }}</span>
-                @enderror
-            </p>
+                    @error('status')
+                        <span class="field-error">{{ $message }}</span>
+                    @enderror
+                </div>
 
-            <button type="submit">Save book</button>
-        </form>
-    </main>
-</body>
-</html>
+                <div class="form-actions">
+                    <button class="button button-primary" type="submit">Save book</button>
+                    <a class="button button-secondary" href="{{ route('books.index') }}">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</x-layouts.app>
