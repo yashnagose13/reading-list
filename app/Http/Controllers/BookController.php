@@ -72,4 +72,15 @@ class BookController extends Controller
         return to_route('books.index')
             ->with('success', 'Book updated successfully.');
     }
+
+    /**
+     * Delete the specified book.
+     */
+    public function destroy(Book $book): RedirectResponse
+    {
+        $book->delete();
+
+        return to_route('books.index')
+            ->with('success', 'Book deleted successfully.');
+    }
 }
