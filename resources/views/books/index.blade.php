@@ -22,6 +22,9 @@
                 <h2>{{ $book->title }}</h2>
                 <p>By {{ $book->author }}</p>
                 <p>Status: {{ $book->status }}</p>
+                <p>
+    <a href="{{ route('books.edit', $book) }}">Edit</a>
+</p>
             </article>
         @empty
             <p>No books yet.</p>

@@ -45,4 +45,31 @@ class BookController extends Controller
         return to_route('books.index')
             ->with('success', 'Book added to your reading list.');
     }
+
+    /**
+     * Show the form for editing a book.
+     */
+    public function edit(Book $book): View
+    {
+        return view('books.edit', [
+            'book' => $book,
+        ]);
+    }
+
+    /**
+     * Update the specified book.
+     */
+    public function update(Request $request, Book $book): RedirectResponse
+    {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'author' => ['required', 'string', 'max:255'],
+            'status' => ['required', 'string', 'in:to-read,reading,finished'],
+        ]);
+
+        $book->update($validated);
+
+        return to_route('books.index')
+            ->with('success', 'Book updated successfully.');
+    }
 }
